@@ -109,12 +109,15 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var set = new Set ();
-    _.each(array, function (item) {
-      set.add (item);
-    });
+    var memo ={};
 
-    return [...set];
+    return _.filter(array, function(item){
+      if (iterator && isSorted){
+        item = iterator (item);
+      }
+      return !memo[item]? memo[item] = true: false;
+    });
+    
   };
 
 
