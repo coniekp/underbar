@@ -389,6 +389,7 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -404,6 +405,21 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var args = [...arguments];
+    var result = [];
+    var maxLength = _.reduce(args, function (max, array){ 
+      return array.length>max? array.length: max;
+    }, 0);
+
+    for (var i = 0; i < maxLength; i++){
+      var zippedElements = []
+      _.each(args, function(array){
+        zippedElements.push(array[i]);
+      });
+      result.push(zippedElements);
+    }
+
+    return result;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -411,16 +427,38 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    return _.reduce(nestedArray, function(result, item){
+      return result.concat(Array.isArray(item)? _.flatten(item): item);
+    },[])
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var arrays = [...arguments];
+    var result = [];
+
+    _.each(arrays[0], function(item){
+      var isShared = _.every(arrays, function(array){
+        return _.contains(array, item);
+      });
+      if (isShared){
+        result.push(item);
+      }
+    });
+
+    return result;
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var arraysToCompare = [...arguments].slice(1);
+    return _.filter(array, function (item){
+      return _.every(arraysToCompare, function (arr){
+        return !_.contains(arr, item);
+      });
+    });
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
